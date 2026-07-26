@@ -40,7 +40,7 @@ with open(CSV_FILE_PATH, mode='r', encoding='utf-8') as file:
             value=payload
         )
         #time.sleep(0.05)
-        #print(f"Sent: {payload['id']} | Pickup: {payload['pickup_datetime']}")
+        print(f"Sent: {payload['id']} | Pickup: {payload['pickup_datetime']}")
         
 
         time.sleep(2)
