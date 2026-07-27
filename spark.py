@@ -1,11 +1,20 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import (
+<<<<<<< Updated upstream
     from_json, col, to_timestamp, hour, dayofweek, month, 
     when, radians, sin, cos, atan2, sqrt, lit, round
 )
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType
 
 from kafka import KafkaConsumer
+=======
+    from_json, col, to_timestamp, hour, dayofweek, month, udf,
+    when, radians, sin, cos, atan2, sqrt, lit, round
+)
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType
+import requests as r
+import json
+>>>>>>> Stashed changes
 # 1. إنشاء جلسة Spark
 spark = SparkSession.builder \
     .appName("NYC_Taxi_Cleaning_FeatureEngineering") \
@@ -83,7 +92,12 @@ time_features_df = city_df \
     .withColumn("pickup_hour", hour(col("pickup_datetime"))) \
     .withColumn("pickup_dayofweek", dayofweek(col("pickup_datetime"))) \
     .withColumn("pickup_month", month(col("pickup_datetime"))) \
+<<<<<<< Updated upstream
     .withColumn("is_weekend", when(col("pickup_dayofweek").isin(1, 7), 1).otherwise(0))
+=======
+    .withColumn("is_weekend", when(col("pickup_dayofweek").isin([1, 7]), 1).otherwise(0))
+    
+>>>>>>> Stashed changes
 
 # 3. حساب المسافة الجغرافية (Haversine Distance)
 lat1 = radians(col("pickup_latitude"))
@@ -104,10 +118,45 @@ final_df = distance_df.withColumn(
     "speed_kmh", 
     round((col("trip_distance_km") / (col("trip_duration") / 3600)), 2)
 )
+#####GEt the neighborhood ##############
 
+<<<<<<< Updated upstream
 # =========================================================
 #  ثالثاً: طباعة النتائج
 # =========================================================
+=======
+
+def get_nyc_neighborhood(lat, lon):
+    if lat is None or lon is None:
+        return "Unknown1"
+    
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Language": "en-US,en;q=0.9",
+    }
+    
+    # Pass actual float values (not ints, not Spark columns)
+    url = f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=json&addressdetails=1"
+    
+    try:
+        response = r.get(url, headers=headers, timeout=3)
+        if response.status_code == 200:
+            data = response.json()
+            address = data["address"]
+            # Safely fall back if 'neighbourhood' key is missing
+            return address["neighbourhood"] if "neighbourhood" in address else "Unknown"
+    except Exception:
+        pass
+    return "Unknown2"
+
+geocode_udf = udf(get_nyc_neighborhood, StringType())
+
+final_df = final_df \
+    .withColumn("pickup_neighborhood", geocode_udf(col("pickup_latitude"), col("pickup_longitude"))) \
+    .withColumn("dropoff_neighborhood", geocode_udf(col("dropoff_latitude"), col("dropoff_longitude")))
+# 9. طباعة المخرجات على الشاشة (Console Output)
+>>>>>>> Stashed changes
 query = final_df.writeStream \
     .outputMode("append") \
     .format("console") \
