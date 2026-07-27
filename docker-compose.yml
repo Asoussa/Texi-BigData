@@ -1,7 +1,8 @@
 version: '3.8'
 
 services:
-  zookeeper:
+  # 1. خدمة Zookeeper (ضرورية لتنسيق عمل Kafka)
+ zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     container_name: zookeeper
     environment:
@@ -10,7 +11,8 @@ services:
     ports:
       - "2181:2181"
 
-  kafka:
+  # 2. خدمة Kafka (تستقبل البيانات من Producer وترسلها لـ Spark)
+ kafka:
     image: confluentinc/cp-kafka:7.5.0
     container_name: kafka
     depends_on:
@@ -20,5 +22,25 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  # 3. خدمة Spark Master (المحرك الرئيسي لـ Spark)
+ spark-master:
+  image: apache/spark:3.5.0
+  container_name: spark-master
+  command: >
+    /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
+  ports:
+    - "8080:8080"
+    - "7077:7077"
+
+ spark-worker:
+  image: apache/spark:3.5.0
+  container_name: spark-worker
+  depends_on:
+    - spark-master
+  command: >
+    /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
