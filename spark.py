@@ -116,4 +116,4 @@ query = final_df.writeStream \
     .format("console") \
     .start()
 
-query.awaitTermination()  الكود كدا زي الفل هسأل بقا كام سؤال كدا
+query.awaitTermination()
