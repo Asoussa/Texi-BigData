@@ -1,6 +1,6 @@
 import csv
 import json
-import time
+import time 
 from kafka import KafkaProducer
 
 producer = KafkaProducer(
@@ -9,7 +9,7 @@ producer = KafkaProducer(
 )
 
 TOPIC_NAME = 'NYC'
-CSV_FILE_PATH = 'Data/NYC.csv'
+CSV_FILE_PATH = r"D:\Mydownload\archive (6)\NYC.csv"
 
 
 #time.sleep(5)  
@@ -40,7 +40,7 @@ with open(CSV_FILE_PATH, mode='r', encoding='utf-8') as file:
             value=payload
         )
         #time.sleep(0.05)
-        #print(f"Sent: {payload['id']} | Pickup: {payload['pickup_datetime']}")
+        print(f"Sent: {payload['id']} | Pickup: {payload['pickup_datetime']}")
         
 
         time.sleep(2)
