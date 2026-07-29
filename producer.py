@@ -9,7 +9,7 @@ producer = KafkaProducer(
 )
 
 TOPIC_NAME = 'NYC'
-CSV_FILE_PATH = r"D:\Mydownload\archive (6)\NYC.csv"
+CSV_FILE_PATH = r"Stream.csv"
 
 
 #time.sleep(5)  
