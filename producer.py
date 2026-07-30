@@ -43,7 +43,7 @@ with open(CSV_FILE_PATH, mode='r', encoding='utf-8') as file:
         print(f"Sent: {payload['id']} | Pickup: {payload['pickup_datetime']}")
         
 
-        time.sleep(2)
+        time.sleep(0.2)
 
 producer.flush()
 producer.close()

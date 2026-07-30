@@ -161,6 +161,7 @@ def predict_onnx_udf(*cols: pd.Series) -> pd.Series:
 df = df.withColumn("log_prediction", predict_onnx_udf(*feature_cols)) \
                    .withColumn("predicted_trip_duration_sec", expm1(col("log_prediction")))
 
+
 query = df.writeStream \
     .outputMode("append") \
     .format("parquet") \
