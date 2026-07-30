@@ -352,6 +352,14 @@ Power BI connects directly to the Azure data lake — no separate database in be
 
 ---
 
+## Presentation & Video Demo
+
+[Presentation](https://canva.link/wavqahkmad5pzel)
+
+[Video Demo](https://drive.google.com/file/d/1wlWmfCQxnAzzkZ7GBQqWBqrrUKnbwU9G/view?usp=drive_link)
+
+---
+
 ## 👥 Team
 
 This project was built as a graduation project by:
